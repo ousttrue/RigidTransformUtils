@@ -9,6 +9,7 @@ namespace RigidTransformUtils
     public struct RigidTransform
     {
         public readonly Quaternion Rotation;
+
         public readonly Vector3 Translation;
 
         public RigidTransform(Quaternion r) : this(r, Vector3.zero)
@@ -28,7 +29,12 @@ namespace RigidTransformUtils
             return String.Format("[{0}, {1}]", Rotation, Translation);
         }
 
-        public readonly static RigidTransform Identity = new RigidTransform(Quaternion.identity, Vector3.zero);
+        public static RigidTransform Identity {
+            get
+            {
+                return  new RigidTransform(Quaternion.identity, Vector3.zero);
+            }
+        }
 
         public static RigidTransform operator *(RigidTransform c1, RigidTransform c2)
         {
@@ -41,6 +47,28 @@ namespace RigidTransformUtils
         {
             var inverse = Quaternion.Inverse(Rotation);
             return new RigidTransform(inverse, inverse * (-Translation));
+        }
+
+        public RigidTransform LocalFrom(RigidTransform rt)
+        {
+            return rt.Inverse() * this;
+        }
+
+        public Vector3 Apply(Vector3 v)
+        {
+            return (Rotation * v) + Translation;
+        }
+
+        public void ApplyWorld(Transform target)
+        {
+            target.position = Translation;
+            target.rotation = Rotation;
+        }
+
+        public void ApplyLocal(Transform target)
+        {
+            target.localPosition = Translation;
+            target.localRotation = Rotation;
         }
 
         public bool Approximately(RigidTransform r)

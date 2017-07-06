@@ -56,6 +56,15 @@ public class RigidTransformTests
         Assert.True(RigidTransform.Identity.Approximately(i));
     }
 
+    [Test]
+    public void Appy()
+    {
+        var a = new RigidTransform(Quaternion.Euler(0, 0, 90), new Vector3(1, 0, 0));
+        var c=a.Apply(new Vector3(1, 0, 0));
+
+        Assert.True(new Vector3(1, 1, 0).Approximately(c));
+    }
+
     /*
     // A UnityTest behaves like a coroutine in PlayMode
     // and allows you to yield null to skip a frame in EditMode
